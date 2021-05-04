@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fish.business.dao.OrderDao">
+
+  <!-- 订单实体类映射 -->
+  <resultMap id="BaseResultMap" type="com.fish.business.domain.Order">
+    <id column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="cust_id" jdbcType="INTEGER" property="custId" />
+    <result column="cust_phone" jdbcType="VARCHAR" property="custPhone" />
+    <result column="flower_id" jdbcType="INTEGER" property="flowerId" />
+    <result column="sales_order_amount" jdbcType="DECIMAL" property="salesOrderAmount" />
+    <result column="sales_order_info" jdbcType="VARCHAR" property="salesOrderInfo" />
+    <result column="oper_name" jdbcType="VARCHAR" property="operName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="customer_name" property="customerName"/>
+    <result column="flower_names" property="flowerName"/>
+  </resultMap>
+
+  <!-- 全部字段 -->
+  <sql id="Base_Column_List">
+    order_id, cust_id, cust_phone, flower_id, sales_order_amount, sales_order_info, oper_name, 
+    create_time
+  </sql>
+
+  <!-- 联表查询 -->
+  <sql id="allColumn">
+    SELECT
+      order_id,
+      o1.cust_id,
+      o1.cust_phone,
+      o1.flower_id,
+      sales_order_amount,
+      sales_order_info,
+      oper_name,
+      create_time,
+      c1.cust_name as customer_name,
+      f1.flower_name as flower_names
+    FROM
+      bus_order o1
+    LEFT JOIN
+      bus_customer c1
+    ON
+      o1.cust_id = c1.cust_id
+    LEFT JOIN
+      bus_flower f1
+    ON
+      o1.flower_id = f1.flower_id
+  </sql>
+
+  <!-- 根据条件查询订单信息 -->
+  <select id="selectOrderInfoByList" parameterType="com.fish.business.domain.Order" resultMap="BaseResultMap">
+    <include refid="allColumn"/>
+    <where>
+      <if test="orderId != null and orderId != ''">
+        and order_id like concat("%",#{orderId},"%")
+      </if>
+      <if test="custPhone !=null and custPhone != ''">
+        and cust_phone like concat("%",#{custPhone},"%")
+      </if>
+    </where>
+    ORDER BY create_time DESC
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bus_order
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from bus_order
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.fish.business.domain.Order">
+    insert into bus_order (order_id, cust_id, cust_phone, 
+      flower_id, sales_order_amount, sales_order_info, 
+      oper_name, create_time)
+    values (#{orderId,jdbcType=VARCHAR}, #{custId,jdbcType=INTEGER}, #{custPhone,jdbcType=VARCHAR}, 
+      #{flowerId,jdbcType=INTEGER}, #{salesOrderAmount,jdbcType=DECIMAL}, #{salesOrderInfo,jdbcType=VARCHAR}, 
+      #{operName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.fish.business.domain.Order">
+    insert into bus_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="custId != null">
+        cust_id,
+      </if>
+      <if test="custPhone != null">
+        cust_phone,
+      </if>
+      <if test="flowerId != null">
+        flower_id,
+      </if>
+      <if test="salesOrderAmount != null">
+        sales_order_amount,
+      </if>
+      <if test="salesOrderInfo != null">
+        sales_order_info,
+      </if>
+      <if test="operName != null">
+        oper_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderId != null">
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="custId != null">
+        #{custId,jdbcType=INTEGER},
+      </if>
+      <if test="custPhone != null">
+        #{custPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="flowerId != null">
+        #{flowerId,jdbcType=INTEGER},
+      </if>
+      <if test="salesOrderAmount != null">
+        #{salesOrderAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="salesOrderInfo != null">
+        #{salesOrderInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="operName != null">
+        #{operName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.business.domain.Order">
+    update bus_order
+    <set>
+      <if test="custId != null">
+        cust_id = #{custId,jdbcType=INTEGER},
+      </if>
+      <if test="custPhone != null">
+        cust_phone = #{custPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="flowerId != null">
+        flower_id = #{flowerId,jdbcType=INTEGER},
+      </if>
+      <if test="salesOrderAmount != null">
+        sales_order_amount = #{salesOrderAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="salesOrderInfo != null">
+        sales_order_info = #{salesOrderInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="operName != null">
+        oper_name = #{operName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.fish.business.domain.Order">
+    update bus_order
+    set cust_id = #{custId,jdbcType=INTEGER},
+      cust_phone = #{custPhone,jdbcType=VARCHAR},
+      flower_id = #{flowerId,jdbcType=INTEGER},
+      sales_order_amount = #{salesOrderAmount,jdbcType=DECIMAL},
+      sales_order_info = #{salesOrderInfo,jdbcType=VARCHAR},
+      oper_name = #{operName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fish.business.dao.FlowerDao">
+
+    <!-- 鲜花实体类关系映射 -->
+    <resultMap id="BaseResultMap" type="com.fish.business.domain.Flower">
+        <id column="flower_id" property="flowerId"/>
+        <result column="flower_name" property="flowerName"/>
+        <result column="flower_type" property="flowerType"/>
+        <result column="flower_number" property="flowerNumber"/>
+        <result column="flower_purchase_price" property="flowerPurchasePrice"/>
+        <result column="flower_sell_price" property="flowerSellPrice"/>
+        <result column="flower_state" property="flowerState"/>
+        <result column="flower_image_address" property="flowerImageAddress"/>
+        <result column="createtime" property="createTime"/>
+    </resultMap>
+
+    <!-- 全部字段 -->
+    <sql id="allColumn">
+        flower_id,flower_name,flower_type,flower_number,flower_purchase_price,flower_sell_price,
+        flower_state,flower_image_address,createtime
+    </sql>
+
+    <!-- 查询鲜花信息 -->
+    <select id="queryFlowerDataByAll" resultMap="BaseResultMap">
+        select
+        <include refid="allColumn"/>
+        from
+        bus_flower
+        <where>
+            <if test="flowerName != null and flowerName != ''">
+                and flower_name like concat("%",#{flowerName},"%")
+            </if>
+            <if test="flowerType != null and flowerType !=''">
+                and flower_type like concat("%",#{flowerType},"%")
+            </if>
+        </where>
+        ORDER BY createtime DESC
+    </select>
+
+    <!-- 根据ID查询出鲜花信息 -->
+    <select id="selectFlowerById" parameterType="integer" resultMap="BaseResultMap">
+        select
+            <include refid="allColumn"/>
+        from
+            bus_flower
+        where
+            flower_id = #{flowerId}
+    </select>
+
+    <!-- 添加鲜花信息 -->
+    <insert id="insertFlowerData" parameterType="com.fish.business.domain.Flower">
+        insert into bus_flower
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="flowerName != null">
+                flower_name,
+            </if>
+            <if test="flowerType != null">
+                flower_type,
+            </if>
+            <if test="flowerNumber != null">
+                flower_number,
+            </if>
+            <if test="flowerPurchasePrice != null">
+                flower_purchase_price,
+            </if>
+            <if test="flowerSellPrice != null">
+                flower_sell_price,
+            </if>
+            <if test="flowerState != null">
+                flower_state,
+            </if>
+            <if test="flowerImageAddress != null">
+                flower_image_address,
+            </if>
+            <if test="createTime != null">
+                createtime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="flowerName != null">
+                #{flowerName},
+            </if>
+            <if test="flowerType != null">
+                #{flowerType},
+            </if>
+            <if test="flowerNumber != null">
+                #{flowerNumber},
+            </if>
+            <if test="flowerPurchasePrice != null">
+                #{flowerPurchasePrice},
+            </if>
+            <if test="flowerSellPrice != null">
+                #{flowerSellPrice},
+            </if>
+            <if test="flowerState != null">
+                #{flowerState},
+            </if>
+            <if test="flowerImageAddress != null">
+                #{flowerImageAddress},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 修改鲜花信息 -->
+    <update id="updateFlowerData" parameterType="com.fish.business.domain.Flower">
+        update bus_flower
+        <set>
+            <if test="flowerName != null">
+                flower_name = #{flowerName},
+            </if>
+            <if test="flowerType != null">
+                flower_type = #{flowerType},
+            </if>
+            <if test="flowerNumber != null">
+                flower_number = #{flowerNumber},
+            </if>
+            <if test="flowerPurchasePrice != null">
+                flower_purchase_price = #{flowerPurchasePrice},
+            </if>
+            <if test="flowerSellPrice != null">
+                flower_sell_price = #{flowerSellPrice},
+            </if>
+            <if test="flowerState != null">
+                flower_state = #{flowerState},
+            </if>
+            <if test="flowerImageAddress != null">
+                flower_image_address = #{flowerImageAddress},
+            </if>
+        </set>
+        where flower_id = #{flowerId}
+    </update>
+
+    <delete id="deleteFlowerData" parameterType="integer">
+        delete from bus_flower
+        where flower_id = #{flowerId}
+    </delete>
+
+</mapper>
