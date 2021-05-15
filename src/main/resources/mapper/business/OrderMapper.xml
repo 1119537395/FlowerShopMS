@@ -55,7 +55,7 @@
         and order_id like concat("%",#{orderId},"%")
       </if>
       <if test="custPhone !=null and custPhone != ''">
-        and cust_phone like concat("%",#{custPhone},"%")
+        and o1.cust_phone like concat("%",#{custPhone},"%")
       </if>
     </where>
     ORDER BY create_time DESC

@@ -75,7 +75,6 @@
     <script type="text/html" id="toolbarDemo">
      <div class="layui-btn-containe">
         <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="addRoleDataBtn">添加</button>
-        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="deleteRoleDataBtn">删除</button>
     </div>
     </script>
 
@@ -340,51 +339,6 @@
         tableIns.reload();
         });
     });
-    
-    //批量删除表格数据
-    function deleteBatchData(obj) {
-        var checkStatus = table.checkStatus(obj.config.id);
-        var data = checkStatus.data;
-        var params = "";
-        var roleName = "";
-
-        if (data.length != 0) {
-            $.each(data, function (i, item) {
-                if (i == 0) {
-                    params += "ids=" + item.roleId;
-                    roleName += item.roleName;
-                } else {
-                    params += "&ids=" + item.roleId;
-                    roleName += "," + item.roleName;
-                }
-            });
-        }
-        //判断在单击批量删除按钮之前是否有数据被选中
-        if (roleName != ""){
-            layer.confirm("确定删除【"+roleName+"】这些角色吗?",{icon:3,title:"提示",skin:'layui-layer-molv',btnAlign:'c'},function (index) {
-                $.post("${Path}/role/deleteBatchData",params,function (returnValue) {
-                    if (returnValue.code == 200){
-                        layer.msg(returnValue.msg,{
-                            icon:6
-                        });
-                        //刷新数据表格
-                        tableIns.reload();
-                    }else {
-                        layer.msg(returnValue.msg,{
-                            icon:5
-                        });
-                    }
-                });
-            });
-        }else {
-            layer.msg("请先选中需要删除的角色！",{
-               icon:5,
-               anim:6
-            });
-        }
-
-    }    
-
 
 
 });

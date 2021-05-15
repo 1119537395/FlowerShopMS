@@ -63,7 +63,6 @@
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-containe">
         <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="addUserDataBtn">添加</button>
-        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="deleteUserDataBtn">删除</button>
     </div>
 </script>
 
@@ -396,7 +395,7 @@
         //保存添加或修改的用户数据
         form.on('submit(doAddSubmit)', function (data) {
             //序列化表单数据
-            var params = $("#changePassword").serialize();
+            var params = $("#addUserFrame").serialize();
 
             $.post(url, params, function (obj) {
                 //弹出成功或失败的提示信息
@@ -410,54 +409,6 @@
             });
         });
 
-        //批量删除用户数据
-        function deleteBatchData(obj) {
-            var checkStatus = table.checkStatus(obj.config.id);
-            var data = checkStatus.data;
-            var params = "";
-            var realName = "";
-
-            if (data.length != 0) {
-                $.each(data, function (i, item) {
-                    if (i == 0) {
-                        params += "ids=" + item.userid;
-                        realName += item.realname;
-                    } else {
-                        params += "&ids=" + item.userid;
-                        realName += "，" + item.realname;
-                    }
-                });
-            }
-            //判断在单击批量删除按钮之前是否有数据被选中
-            if (realName != "") {
-                layer.confirm("确定删除【" + realName + "】这些用户吗?", {
-                    icon: 3,
-                    title: "提示",
-                    skin: 'layui-layer-molv',
-                    btnAlign: 'c'
-                }, function (index) {
-                    $.post("${Path}/user/deleteBatchUserData", params, function (returnValue) {
-                        if (returnValue.code == 200) {
-                            layer.msg(returnValue.msg, {
-                                icon: 6
-                            });
-                            //刷新数据表格
-                            tableIns.reload();
-                        } else {
-                            layer.msg(returnValue.msg, {
-                                icon: 5
-                            });
-                        }
-                    });
-                });
-            } else {
-                layer.msg("请先选中需要删除的用户！", {
-                    icon: 5,
-                    anim: 6
-                });
-            }
-
-        }
 
         //给用户分配角色权限的模态框
         function openAssignModel(userData) {
